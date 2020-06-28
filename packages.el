@@ -48,3 +48,8 @@
 
 (package! nyan-mode)
 (package! sublimity)
+(disable-packages! nose)
+(package! docker)
+(package! dockerfile-mode)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+(package! docker-compose-mode)

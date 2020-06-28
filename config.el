@@ -28,8 +28,16 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
-
+(setq org-src-tab-acts-natively t)
+(setq org-directory "~/Dropbox/org/")
+(setq org-capture-templates
+      '(("p" "Project Task" entry (file+headline "~/Dropbox/org/project/project.org" "Inbox")
+             "** TODO %?\n")
+        ("n" "notes" entry (file "~/Dropbox/org/notes.org")
+         "* %?%t")
+        ("m" "Meetings memo" entry (file+olp+datetree "~/Dropbox/org/project/mtg.org")
+         "* %?%t")))
+(setq org-agenda-files (list "~/Dropbox/org/project"))
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
@@ -107,7 +115,21 @@
   (lambda ()
     (make-local-variable 'typescript-indent-level)
     (setq typescript-indent-level 2)))
+(defun web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+  ())
+(add-hook 'web-mode-hook 'web-mode-hook)
 (setq tide-format-options '(:indentSize 2 :tabSize 2))
+(defun web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+  (flycheck-add-mode 'css-stylelint 'web-mode))
+;;   (add-hook 'typescript-mode-hook (lambda () (flycheck-add-next-checker 'lsp-ui 'javascript-eslint)))
+;;   (add-hook 'typescript-mode-hook (lambda () (flycheck-add-next-checker 'javascript-eslint 'css-stylelint))))
+(add-hook 'web-mode-hook 'web-mode-hook)
 
 ;; 軽量化
 (setq linum-delay t)
@@ -125,4 +147,22 @@
 (setq global-hl-line-timer
       (run-with-idle-timer 0.03 t 'global-hl-line-timer-function))
 ;; (cancel-timer global-hl-line-timer)
-(set-frame-parameter nil 'alpha 95)
+;; (set-frame-parameter nil 'alpha 95)
+
+;; projectileのルート設定
+(setq projectile-project-root-files #'( ".projectile" ))
+(setq projectile-project-root-files-functions #'(projectile-root-top-down
+                                                 projectile-root-top-down-recurring
+                                                 projectile-root-bottom-up
+                                                 projectile-root-local))
+
+;; ts,tsxでtideではなくts-lintを使用する
+;; https://github.com/hlissner/doom-emacs/issues/2395#issuecomment-578920992
+;; (define-derived-mode ts-mode web-mode "TypeScript Mode")
+;; (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
+;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+;; (after! flycheck
+;;   (flycheck-add-mode 'javascript-eslint 'typescript-mode)
+;;   (flycheck-add-mode 'css-stylelint 'typescript-mode)
+;;   (add-hook 'typescript-mode-hook (lambda () (flycheck-add-next-checker 'lsp-ui 'javascript-eslint)))
+;;   (add-hook 'typescript-mode-hook (lambda () (flycheck-add-next-checker 'javascript-eslint 'css-stylelint))))
